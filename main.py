@@ -68,17 +68,17 @@ def handle_incoming_data(arduino_communicator):
 
 def main(args: list) -> None:
     """"""
-    arduino_communicator, pilot_profile = setup()
+    arduino_communicator, pilot_profile = setup() # pilot_profile would configure what buttons do what
     
     while True:
         # Get the gamepad input for what buttons the pilot is pressing
-        gamepad_input = get_gamepad_event()
+        gamepad_input = get_gamepad_event() # get all the events at that moment (a list?) can we force it to only return 1 at a time?
 
         # Get the speed mode, tool lockouts, thruster adjustments, etc from the UI
-        rov_speed_mode, tool_mode, thruster_config = get_rov_mode()
+        rov_speed_mode, tool_mode, thruster_config = get_rov_mode() # turn thrusters on/off, tools on/off, change thruster direction, etc.
         
         # Go from buttons that the pilot pressed to when they mean in terms of which way the ROV goes
-        commanded_direction, tool_command = map_inputs(gamepad_input, pilot_profile)
+        commanded_direction, tool_command = map_inputs(gamepad_input, pilot_profile) # direction is forward/backward, up/down, etc.
 
         # Scale the commanded direction to the speed the pilot set in the UI
         commanded_vector = scale_direction(commanded_direction, rov_speed_mode)
