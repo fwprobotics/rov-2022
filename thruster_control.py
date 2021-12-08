@@ -38,13 +38,9 @@ while True:
             print("button:", event.button)
             if event.button == 8: # select was pressed
                 writeToSerial(STOP + 'a')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'b')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'c')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'd')
-                pygame.time.wait(5)
             if event.button == 6: # left front button pressed
                 pass
             if event.button == 4: # left back button pressed
@@ -55,58 +51,37 @@ while True:
                 pass
             if event.button == 0: # right joystick up
                 writeToSerial(FORWARD + 'b')
-                pygame.time.wait(5)
                 writeToSerial(FORWARD + 'c')
-                pygame.time.wait(5)
             if event.button == 1: # right joystick right
                 writeToSerial(BACKWARD + 'd')
-                pygame.time.wait(5)
                 writeToSerial(FORWARD + 'a')
-                pygame.time.wait(5)
             if event.button == 2: # right joystick down
                 writeToSerial(BACKWARD + 'b')
-                pygame.time.wait(5)
                 writeToSerial(BACKWARD + 'c')
-                pygame.time.wait(5)
             if event.button == 3: # right joystick left
                 writeToSerial(BACKWARD + 'a')
-                pygame.time.wait(5)
                 writeToSerial(FORWARD + 'd')
-                pygame.time.wait(5)
         if event.type == pygame.JOYBUTTONUP:# right joystick has moved back to resting position
             print("pygame.JOYBUTTONDOWN event")
             print(event)
             print("button:", event.button)
             if event.button == 8:
                 writeToSerial(STOP + 'a') 
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'b')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'c')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'd')
-                pygame.time.wait(5)
             if event.button == 0: # right joystick up
                 writeToSerial(STOP + 'b')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'c')
-                pygame.time.wait(5)
             if event.button == 1: # right joystick right
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'd')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'a')
-                pygame.time.wait(5)
             if event.button == 2: # right joystick down
                 writeToSerial(STOP + 'b')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'c')
-                pygame.time.wait(5)
             if event.button == 3: # right joystick left
                 writeToSerial(STOP + 'a')
-                pygame.time.wait(5)
                 writeToSerial(STOP + 'd')
-                pygame.time.wait(5)
         elif event.type == pygame.JOYAXISMOTION:
             print("pygame.JOYAXISMOTION event")
             print(event)
@@ -130,6 +105,5 @@ while True:
                 writeToSerial(STOP + 'b')
                 writeToSerial(STOP + 'c')
                 writeToSerial(STOP + 'd')
-        pygame.time.wait(15)
 
 
