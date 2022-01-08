@@ -16,7 +16,7 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 print(joysticks)
 
 # initialize serial monitor
-ser=serial.Serial('/dev/cu.usbmodem141301' , 19200, timeout=1)
+ser=serial.Serial('/dev/cu.usbmodem14201' , 19200, timeout=1)
 
 def writeToSerial(msg):
     print("writing", msg.encode())
@@ -35,7 +35,7 @@ while True:
             print("pygame.JOYBUTTONDOWN event")
             print(event)
             print("button:", event.button) 
-            if event.joy == 0 : 
+            if event.joy == 0 : #controller one
                 if event.button == 8: # select was pressed
                     writeToSerial(STOP + 'a')
                     writeToSerial(STOP + 'b')
@@ -55,20 +55,20 @@ while True:
                 if event.button == 3: # right joystick left
                     writeToSerial(BACKWARD + 'a')
                     writeToSerial(FORWARD + 'd')
-            if event.joy == 1: 
+            if event.joy == 1: #controller 2
                 if event.button == 0: # 1 button is presed on controller 1, 
-                    writeToSerial("5z") 
+                    writeToSerial("10x") 
                 if event.button == 1: # 2 button is pressed on controller 1
-                    writeToSerial( "5y") 
+                    writeToSerial( "10w") 
                 if event.button == 2: # 3 button is pressed on controller 1
-                    writeToSerial("-5z") 
+                    writeToSerial("-10x") 
                 if event.button == 3: # 4 button is pressed on controller 1
-                    writeToSerial("-5y") 
+                    writeToSerial("-10w") 
         if event.type == pygame.JOYBUTTONUP:# right joystick has moved back to resting position
             print("pygame.JOYBUTTONDOWN event")
             print(event)
             print("button:", event.button)
-            if event.joy == 0:
+            if event.joy == 0: #controller 1
                 if event.button == 8:
                     writeToSerial(STOP + 'a')
                     writeToSerial(STOP + 'b')
@@ -86,6 +86,16 @@ while True:
                 if event.button == 3: # right joystick left
                     writeToSerial(STOP + 'a')
                     writeToSerial(STOP + 'd')
+            if event.joy == 1: #controller 2
+                if event.button == 4: # left trigger button 1
+                    writeToSerial("180z")
+                if event.button == 6: #left trigger button 2
+                    writeToSerial("0z")
+                if event.button == 5: # right trugger button 1
+                    writeToSerial("180y")
+                if event.button ==7: # right trigger button 2
+                    writeToSerial("0y")
+         
         elif event.type == pygame.JOYAXISMOTION:
             print("pygame.JOYAXISMOTION event")
             print(event)
