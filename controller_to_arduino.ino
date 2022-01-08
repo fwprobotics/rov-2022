@@ -8,10 +8,10 @@
 int thrusterPins[THRUSTERS] = {2,3,4,5}; // Thrusters on pins 2 to 5
 Servo thrusters[THRUSTERS];
 
-int servoPins[SERVOS] = {6,7,8,9}; // Servos on pins 6 to 9 
+int servoPins[SERVOS] = {10, 11, 6,9}; // Servos on pins 6 to 9 
 Servo servos[SERVOS];
 
-int servoPositions[SERVOS] = {10,10,10,10}; 
+int servoPositions[SERVOS] = {10,10, 0, 0}; 
 
 
 
@@ -27,7 +27,7 @@ void setup() {
 
     for(int i=0; i < SERVOS; i++)
   { 
-    servos[i].attach(servoPins[i]); 
+    servos[i].attach(servoPins[i], 1000, 2000); 
     servos[i].write(servoPositions[i]);
     
   }
@@ -57,7 +57,7 @@ void serviceSerial()
         Serial.println(speed);
        thrusters[ch - 'a'].write(speed);
       }
-   if (ch >= 'w' && ch < 'w' + SERVOS) 
+   if (ch >= 'w' && ch < 'w' + 2) 
    {
         Serial.print("Servo "); 
         Serial.print(ch - 'w' + 1);
@@ -67,15 +67,21 @@ void serviceSerial()
 
        if (speed >0 && currentServoPosition + speed <= 170) {
         servoPositions[ch - 'w'] = speed + currentServoPosition;
-        servos[ch - 'w'].write(servoPositions[ch - 'w'] );   
+        servos[ch - 'w'].write(servoPositions[ch - 'w'] ); 
+        Serial.println(servoPositions[ch - 'w'] );  
        }
 
-       if(speed<0 && currentServoPosition + speed >= 10) {
+       else if(speed<0 && currentServoPosition + speed >= 10) {
          servoPositions[ch - 'w'] = speed + currentServoPosition;
         servos[ch - 'w'].write(servoPositions[ch - 'w'] );  
-        
+        Serial.println(servoPositions[ch - 'w'] );
         
        }
+   }
+   if (ch >= 'y' && ch < 'y' + 2) {
+        servoPositions[ch - 'y'] = speed;
+        servos[ch - 'y'].write(servoPositions[ch - 'w'] );  
+        
    }
       
   }
