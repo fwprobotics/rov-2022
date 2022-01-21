@@ -8,7 +8,7 @@
 int thrusterPins[THRUSTERS] = {2,3,4,5}; // Thrusters on pins 2 to 5
 Servo thrusters[THRUSTERS];
 
-int servoPins[SERVOS] = {10, 11, 6,9}; // Servos on pins 6 to 9 
+int servoPins[SERVOS] = {8, 9, 10, 11}; // Servos on pins 6 to 9  (w and x are camera; y and z are claws)
 Servo servos[SERVOS];
 
 int servoPositions[SERVOS] = {10,10, 0, 0}; 
@@ -79,8 +79,8 @@ void serviceSerial()
        }
    }
    if (ch >= 'y' && ch < 'y' + 2) {
-        servoPositions[ch - 'y'] = speed;
-        servos[ch - 'y'].write(servoPositions[ch - 'w'] );  
+        servoPositions[ch - 'y' + 2] = speed;
+        servos[ch - 'y' + 2].write(servoPositions[ch - 'y' + 2] );  
         
    }
       
