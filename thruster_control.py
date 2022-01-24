@@ -32,9 +32,15 @@ while True:
     for event in pygame.event.get(): # User did something.
     
         if event.type == pygame.JOYBUTTONDOWN:  # right joystick is moved out of resting position or select button is pressed
-            print("pygame.JOYBUTTONDOWN event")
-            print(event)
-            print("button:", event.button) 
+            #print("pygame.JOYBUTTONDOWN event")
+            #print(event)
+            #print("button:", event.button) 
+            if event.button == 9 : #start button pressed
+                if event.joy == 0 : 
+                    print("this is controller one (thrusters/claws)") 
+                if event.joy == 1 : 
+                    print("this is controller two (cameras/claws) ") 
+        
             if event.joy == 0 : #controller one
                 if event.button == 8: # select was pressed
                     writeToSerial(STOP + 'a')
@@ -65,9 +71,9 @@ while True:
                 if event.button == 3: # 4 button is pressed on controller 1
                     writeToSerial("-10w") 
         if event.type == pygame.JOYBUTTONUP:# right joystick has moved back to resting position
-            print("pygame.JOYBUTTONDOWN event")
-            print(event)
-            print("button:", event.button)
+            #print("pygame.JOYBUTTONDOWN event")
+            #print(event)
+            #print("button:", event.button)
             if event.joy == 0: #controller 1
                 if event.button == 8:
                     writeToSerial(STOP + 'a')
@@ -97,12 +103,12 @@ while True:
                     writeToSerial("0y")
          
         elif event.type == pygame.JOYAXISMOTION:
-            print("pygame.JOYAXISMOTION event")
-            print(event)
+            #print("pygame.JOYAXISMOTION event")
+            #print(event)
             if event.joy == 0: 
                 axis = event.axis
                 value = round(event.value, 2)
-                print(axis, value)
+                #print(axis, value)
                 if axis == 1 and value == 1: #moves back, left joystick down
                     writeToSerial(BACKWARD + 'a')
                     writeToSerial(BACKWARD + 'd')
