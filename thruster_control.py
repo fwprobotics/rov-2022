@@ -16,7 +16,14 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 print(joysticks)
 
 # initialize serial monitor
-ser=serial.Serial('/dev/cu.usbmodem14201' , 19200, timeout=1)
+correctdevice = str()    
+for port in serial.tools.list_ports.comports():
+    print(port.__dict__)
+    #if "arduino" in port.manufacturer.lower():
+    if "usb" in port.device.lower():
+        correctdevice = port.device
+print(correctdevice)
+ser=serial.Serial(correctdevice , 19200, timeout=1)
 
 def writeToSerial(msg):
     print("writing", msg.encode())
@@ -126,4 +133,4 @@ while True:
                     writeToSerial(STOP + 'b')
                     writeToSerial(STOP + 'c')
                     writeToSerial(STOP + 'd')
-        pygame.time.wait(15)
+        pygame.time.wait(15)# Write your code here :-)
