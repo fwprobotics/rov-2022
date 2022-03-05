@@ -5,7 +5,7 @@ import pygame
 import serial
 
 FORWARD = '1880' # '1760'
-BACKWARD = '1120'  # ''1240'
+BACKWARD = '1120'  # '1240'
 STOP = '1500'
 
 pygame.init()
@@ -16,7 +16,14 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 print(joysticks)
 
 # initialize serial monitor
-ser=serial.Serial('/dev/cu.usbmodem141101' , 19200, timeout=0.005)
+correctdevice = str()
+for port in serial.tools.list_ports.comports():
+    # print(port.__dict__)
+    #if "arduino" in port.manufacturer.lower():
+    if "usb" in port.device.lower():
+        correctdevice = port.device
+print("Using serial port: ", correctdevice)
+ser = serial.Serial(correctdevice, 19200, timeout=0.005)
 
 def writeToSerial(msg):
     print("writing", msg.encode())
