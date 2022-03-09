@@ -15,7 +15,7 @@ Servo servos[SERVOS];
 int servoPositions[SERVOS] = {10,10, 0, 0}; 
 
 
-#define MAX_THRUSTER_STEP 10
+#define MAX_THRUSTER_STEP 2
 int lastThrusterSpeeds[THRUSTERS] = {1500, 1500, 1500, 1500};
 int desiredThrusterSpeeds[THRUSTERS] {1500, 1500, 1500, 1500};
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -49,7 +49,8 @@ void loop() {
   {
     // Get the speed the pilot set
     int speed = desiredThrusterSpeeds[i];
-    if(speed > STOP) {
+    if(speed > STOP)
+    {
       // If it is in a faster forward direction, only ramp up a small step
       if(speed > lastThrusterSpeeds[i]) {
         speed = MIN(lastThrusterSpeeds[i] + MAX_THRUSTER_STEP, speed);
@@ -87,7 +88,7 @@ void serviceSerial()
     
     if (ch >= 'a' && ch < 'a' + THRUSTERS)
      { 
-        uint8_t thrusterIndex = ch - 'a';
+        char thrusterIndex = ch - 'a';
         Serial.print("Thruster "); 
         Serial.print(thrusterIndex + 1);
         Serial.print("   set to ");
