@@ -1,0 +1,33 @@
+{
+	"rightjoystick": {
+		"right": {
+			"a": 1760,
+			"d": 1240, 
+		},
+		"left": {
+            "a": 1240,
+			"d": 1760, 
+		}, 
+		"up": {
+            "b" : 1760,
+            "c" : 1240,
+		},
+		"down": {
+
+		}
+	},
+	"leftjoystick": {
+		"right": {
+
+		},
+		"left": {
+
+		}, 
+		"up": {
+
+		},
+		"down": {
+
+		}
+	}
+}# Write your code here :-)
