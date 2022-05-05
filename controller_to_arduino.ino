@@ -1,5 +1,4 @@
 #include <Servo.h>
-#include <stdint.h>
 
 #define THRUSTERS 4 // the number of Thrusters
 #define STOP 1500
@@ -9,13 +8,13 @@
 int thrusterPins[THRUSTERS] = {2, 4, 5, 3}; // Thrusters on pins 2 to 5
 Servo thrusters[THRUSTERS];
 
-int servoPins[SERVOS] = {8, 9, 10, 11}; // Servos on pins 6 to 9  (w and x are camera; y and z are claws)
+int servoPins[SERVOS] = {8, 9, 11, 10}; // Servos on pins 6 to 9  (w and x are camera; y and z are claws)
 Servo servos[SERVOS];
 
 int servoPositions[SERVOS] = {10,10, 0, 0}; 
 
 
-#define MAX_THRUSTER_STEP 2
+#define MAX_THRUSTER_STEP 5
 int lastThrusterSpeeds[THRUSTERS] = {1500, 1500, 1500, 1500};
 int desiredThrusterSpeeds[THRUSTERS] {1500, 1500, 1500, 1500};
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
