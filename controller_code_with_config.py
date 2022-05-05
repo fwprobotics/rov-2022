@@ -31,12 +31,11 @@ def writeToSerial(msg):
 
 
 # Opening JSON file
-f = open('thruster_config.json')
+f = open('slow_thruster_config.json')
 
 # returns JSON object as
 # a dictionary
 data = json.load(f)
-print(data)
 
 # -------- Main Program Loop -----------
 while True:
@@ -53,9 +52,9 @@ while True:
             #print("button:", event.button)
             if event.button == 9 : #start button pressed
                 if event.joy == 0 :
-                    print("this is controller one (thrusters/claws)")
+                    print("this is controller one (thrusters)")
                 if event.joy == 1 :
-                    print("this is controller two (cameras/claws) ")
+                    print("this is controller two (claws) ")
 
             if event.joy == 0 : #controller one
                 if event.button == 8: # select was pressed
