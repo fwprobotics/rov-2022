@@ -19,8 +19,8 @@ print(joysticks)
 correctdevice = str()
 for port in serial.tools.list_ports.comports():
     # print(port.__dict__)
-    #if "arduino" in port.manufacturer.lower():
-    if "usb" in port.device.lower():
+    if "arduino" in port.manufacturer.lower():
+    #if "usb" in port.device.lower():
         correctdevice = port.device
 print("Using serial port: ", correctdevice)
 ser = serial.Serial(correctdevice, 19200, timeout=0.005)
@@ -31,7 +31,7 @@ def writeToSerial(msg):
 
 
 # Opening JSON file
-f = open('slow_thruster_config.json')
+f = open('thruster_config.json')
 
 # returns JSON object as
 # a dictionary
@@ -123,7 +123,7 @@ while True:
             #print(event)
             if event.joy == 0:
                 axis = event.axis
-                value = round(event.value, 2)
+                value = round(event.value,12)
                 #print(axis, value)
                 left_joystick_dict = data.get('leftjoystick', {})
                 if axis == 1 and value == 1: #moves back, left joystick down
@@ -148,4 +148,4 @@ while True:
     # See if the arduino has tried to print anything, and print it here if so.
     out = ser.readline()
     if out:
-        print(out.decode(), end = '')# Write your code here :-)
+        print(out.decode(), end = '')
