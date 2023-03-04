@@ -18,14 +18,17 @@ for port in serial.tools.list_ports.comports():
     #if "usb" in port.device.lower():
         correctdevice = port.device
 print("Using serial port: ", correctdevice)
-ser = serial.Serial(correctdevice, 19200, timeout=0.005)
+#ser = serial.Serial(correctdevice, 19200, timeout=0.005)
 
 def writeToSerial(msg):
     print("writing", msg.encode())
-    ser.write(msg.encode())
+    #ser.write(msg.encode())
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
     # Figure out how 'wide' each range is
+    value = round(value, 4)
+    if not (leftMin <= value <= leftMax):
+        print(value)
     leftSpan = leftMax - leftMin
     rightSpan = rightMax - rightMin
 
@@ -46,6 +49,16 @@ controller.init()
 while True:
     for event in pygame.event.get():
         event_dict = event.dict
+        axis = event_dict.get('axis')
+        val = event.dict.get('value')
+        if val is not None:
+            if axis in {0, 1, 3, 4}:
+                if val is not None and not -0.1 <= val <= 0.1:
+                    print(f"axis {axis} :{val}")
+                    print(str(axis) * int(translate(val, -1, 1, 1, 41)))
+            else:
+                print(f"axis: {axis}, {val}")
+        """
         if event_dict.get("axis") == 4:
             degrees = translate (event.dict.get("value"), -1, 1, servo_b_close, servo_b_open)
             print(degrees)
@@ -103,11 +116,12 @@ while True:
                 writeToSerial(str(int(1500)) + "c")
             else:
                 writeToSerial(str(int(c_degrees)) + "c")
+        # """
         
 
-        pygame.time.wait(15)
+        pygame.time.wait(20)
 
-    out = ser.readline()
+    out = b'' # ser.readline()
     if out:
         print(out.decode(), end = '')
 
