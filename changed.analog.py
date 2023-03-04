@@ -19,7 +19,7 @@ axis_joystick_right_left_right = 2
 axis_joystick_right_up_down = 3
 yaw_axis = axis_joystick_left_left_right
 foward_axis_backwards = axis_joystick_right_up_down
-up_down_axis = [axis_joystick_right_up_down,axis_joystick_left_up_down}
+up_down_axis = [axis_joystick_right_up_down, axis_joystick_left_up_down] # Fixed syntax on this line (was '[}' )
 
 claw_one = "x"
 claw_two = "y"
@@ -33,11 +33,16 @@ claw_position_mapping = {
     claw_two: (servo_a_close, servo_a_open)
 }
 
-axis_to_claw{
+axis_to_claw = {  # Needed to add =
     axis_left_trigger: claw_two,
     axis_right_trigger: claw_one,
 }
 
+# Let's add some simple variables for which thruster corresponds to which direction
+thruster_left = None  # This should be one of thruster_one, _two, _three, or _four
+thruster_right = None
+thruster_up_front = None
+thruster_up_back = None
 
 
 # initialize serial monitor
@@ -68,6 +73,19 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     # Convert the 0-1 range into a value in the right range.
     return rightMin + (valueScaled * rightSpan)
 
+
+def roundToNearest10(x: float) -> float:
+    return round(...)  # Fill this in so that we round x to the nearest 10
+    # The code to do this is done below, we just want to move it here and make it generic
+
+
+def deadband(x: float) -> float:
+    # Check if x is close enough to neutral throttle (1500), that we should just use that
+        # If so, we should use / return 1500
+    # Otherwise, keep x as is
+    pass
+
+
 # controller testing
 num = 0
 pygame.init()
@@ -93,10 +111,37 @@ while True:
             claw_code = axis_to_claw[axis] # change to 'x' or 'y'
             degrees = translate (event.dict.get("value"), -1, 1, *claw_position_mapping[claw_code])  
             print(degrees)
-            writeToSerial(f"{degrees}{claw_code}" }
+            writeToSerial(f"{degrees}{claw_code}" ) # Needed to change ending } to )
     
         if axis in {axis_joystick_left_left_right,axis_joystick_left_up_down,axis_joystick_right_left_right,axis_joystick_right_up_down}:
+            pass
+
+            # Now compare the input `axis` to the directions from above
+            # Yaw axis
+                # We want to turn left/right
+                # Let's scale our joystack value to commands
+                command0 = translate(...)
+                command1 = translate(...)
+                thruster0 = None  # pick which thrusters (directionally) we should use
+                thruster1 = None
+
+            # Forward back axis
+                # Do roughly the same stuff as above
+
+            # Up down axis
+                # Do roughly the same stuff as above
+
+            # Round to the nearest 10
+            command0 = roundToNearest10(command0)
+            command1 = roundToNearest10(command1)
+            # If we're really close to neutral, just do that
+            command0 = deadband(command0)
+            command1 = deadband(command1)
             
+            # Now send the commands we've created
+            writeToSerial(f"")  # Put our command together with the thruster code (a,b,c,d) 
+            writeToSerial(f"")  # And again for the other thruster
+
         if event_dict.get("axis") == 0:
             degrees = translate (event.dict.get("value"), -1, 1,1400, 1600)
             degrees = round(degrees/10)*10
