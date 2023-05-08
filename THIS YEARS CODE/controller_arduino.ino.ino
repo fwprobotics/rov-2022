@@ -5,7 +5,7 @@
 
 #define SERVOS 4 // the number of Servos
 
-int thrusterPins[THRUSTERS] = {2, 3, 4, 5}; // Thrusters on pins 2 to 5
+int thrusterPins[THRUSTERS] = {6, 3, 4, 5}; // Thrusters on pins 2 to 5
 Servo thrusters[THRUSTERS];
 
 int servoPins[SERVOS] = {8, 9, 11, 10}; // Servos on pins 6 to 9  (w and x are camera; y and z are claws)
