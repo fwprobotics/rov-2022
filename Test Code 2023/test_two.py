@@ -36,15 +36,30 @@ while True:
 
     for event in pygame.event.get():
         event_dict = event.dict
+        
         if event_dict.get("axis") == 4:
             degrees=translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
             writeToSerial(str(int(degrees)) + "y")
-
         if event_dict.get("axis") ==5:
             degrees = translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
             writeToSerial(str(int(degrees)) + "z")
+            
+        if event_dict.get("axis") == 3:
+            
+            speed_up = translate(event.dict.get("value"), -1,1,1400,1600) #up
+            print (speed_up)
+            writeToSerial(str(int(speed_up)) + "b") 
+            
+            speed_down = translate(event.dict.get("value"),-1,1,1600,1400) #down
+            print (speed_down)
+            writeToSerial(str(int(speed_down)) + "a")
+            
+            writeToSerial(str(int(1500)) + "c")
+            
+            writeToSerial(str(int(1500)) + "d")
+            
 pygame.time.wait(15)
 out = ser.readline()
 if out:
