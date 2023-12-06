@@ -1,8 +1,10 @@
+
 import json
 import pygame
 import serial
 import serial.tools.list_ports
-from sigfig import round
+def myround(x, base=10):
+    return base * round(x/base)
 
 
 
@@ -44,15 +46,14 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 
 while True:
 
-
     for event in pygame.event.get():
         event_dict = event.dict
-        if counter % 60 ==0:
+        if counter % 25 ==0:
             if event.dict.get("axis") ==3 or event.dict.get("axis") == 2 :
                 print(event.dict)
         counter = counter +1
 
-    
+
         if event_dict.get("axis") == 4:
             degrees=translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
@@ -62,71 +63,63 @@ while True:
             print(degrees)
             writeToSerial(str(int(degrees)) + "z")
 
-        if event_dict.get("axis") == 2: # thruster's going up to down
+        if event_dict.get("axis") == 3: # thruster's going up to down
 
-            speed_up = round(translate(event.dict.get("value"), -1,1,1400,1600),sigfigs =2) #up
-            print (speed_up)
+            speed_up = myround(translate(event.dict.get("value"), -1,1,1400,1600)) #up
             if int(speed_up) != b_recent_speed:
-                writeToSerial(str(int(speed_up)) + " b")
+                writeToSerial(str(int(speed_up)) + "b")
                 b_recent_speed = speed_up
 
 
-            speed_down = round(translate(event.dict.get("value"),-1,1,1600,1400),sigfigs =2) #down
-            print (speed_down)
+            speed_down = myround(translate(event.dict.get("value"),-1,1,1600,1400)) #down
             if int(speed_down) != a_recent_speed:
-                writeToSerial(str(int(speed_down)) + " a")
+                writeToSerial(str(int(speed_down)) + "a")
                 a_recent_speed = speed_down
 
             stop_1 = 1500
-           
+
             if int(stop_1) != c_recent_speed:
-                writeToSerial(str(int(stop_1)) + " c") 
+                writeToSerial(str(int(stop_1)) + "c")
                 c_recent_speed = stop_1
-                
+
             if int(stop_1) != d_recent_speed:
-                writeToSerial(str(int(stop)) + " d") 
+                writeToSerial(str(int(stop)) + "d")
                 d_recent_speed = stop_1
 
-        if event_dict.get("axis") == 3: # thruster's going forward to backward
+        if event_dict.get("axis") == 2: # thruster's going forward to backward
             print(event.dict)
 
-            speed_forward = translate(event.dict.get("value"),-1,1,1600,1400) #forward
-            print (speed_forward)
+            speed_forward = myround(translate(event.dict.get("value"),-1,1,1600,1400)) #forward
             if int(speed_forward) != c_recent_speed:
-                writeToSerial(str(int(speed_forward)) + " c")
+                writeToSerial(str(int(speed_forward)) + "c")
                 c_recent_speed = speed_forward
 
-            speed_backward = translate(event.dict.get("value"), -1,1,1400,1500) #backward
-            print (speed_backward)
-            writeToSerial(str(int(speed_backward)) + " d")
+            speed_backward = myround(translate(event.dict.get("value"), -1,1,1400,1500)) #backward
+            writeToSerial(str(int(speed_backward)) + "d")
             if int(speed_backward) != d_recent_speed:
-                writeToSerial(str(int(speed_backward)) + " d")
+                writeToSerial(str(int(speed_backward)) + "d")
                 d_recent_speed = speed_backward
 
             if 0<event.value<=-1:
 
-                speed_up_2 = translate(event.dict.get("value"),-1,0,1400,1500)
-                print (speed_up_2)
+                speed_up_2 = myround(translate(event.dict.get("value")),-1,0,1400,1500)
                 if int(speed_up_2) != a_recent_speed:
-                    writeToSerial(str(int(speed_up_2)) + " a")
+                    writeToSerial(str(int(speed_up_2)) + "a")
                     a_recent_speed = speed_up_2
 
-                speed_down_2 = translate(event.dict.get("value"),-1,0,1600,1500)
-                print (speed_down_2)
+                speed_down_2 = myround(translate(event.dict.get("value")),-1,0,1600,1500)
                 if int(speed_down_2) != b_recent_speed:
-                    writeToSerial(str(int(speed_down_2)) + " b")
+                    writeToSerial(str(int(speed_down_2)) + "b")
                     b_recent_speed = speed_down_2
             else:
-                speed_up_3 = translate(event.dict.get("value"),0,1,1500,1400)
-                print (speed_up_3)
+                speed_up_3 = myround(translate(event.dict.get("value"),0,1,1500,1400))
                 if int(speed_up_3) != a_recent_speed:
-                    writeToSerial(str(int(speed_up_3)) + " a")
+                    writeToSerial(str(int(speed_up_3)) + "a")
                     a_recent_speed = speed_up_3
 
-                speed_down_3 = translate(event.dict.get("value"),0,-1,1500,1600)
-                print (speed_down_3)
+                speed_down_3 = myround(translate(event.dict.get("value"),0,-1,1500,1600))
                 if int(speed_down_3) != b_recent_speed:
-                    writeToSerial(str(int(speed_down_3)) + " b")
+                    writeToSerial(str(int(speed_down_3)) + "b")
                     b_recent_speed = speed_down_3
 
 
