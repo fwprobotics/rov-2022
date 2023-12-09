@@ -16,10 +16,10 @@ void setup() { // put your setup code here, to run once:
   myservo_1.attach(9);
   myservo_2.attach(10);
 
-  mythruster_up.attach(1);
-  mythruster_down.attach(2);
-  mythruster_forward.attach(3);
-  mythruster_backward.attach(4);
+  mythruster_up.attach(2);
+  mythruster_down.attach(3);
+  mythruster_forward.attach(4);
+  mythruster_backward.attach(5);
 
   delay(1000);
   Serial.println("Start!");
