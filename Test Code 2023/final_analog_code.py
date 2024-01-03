@@ -27,6 +27,14 @@ b_recent_speed = 0
 c_recent_speed = 0
 d_recent_speed = 0
 
+speed_fb_min = 1300
+speed_fb_max = 1700
+speed_fb_d_max = 1600
+speed_fb_u_min = 1400
+speed_ud_max = 1700
+speed_ud_min = 1300
+
+
 speed_up_1 =0 
 speed_down_1 = 0
 
@@ -91,21 +99,21 @@ while True:
         
         if abs(x_position)>abs(y_position) :
 
-            speed_forward = myround(translate(x_position,-1,1,1400,1600)) #forward
+            speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
             if int(speed_forward) != c_recent_speed:
                 writeToSerial(str(int(speed_forward)) + "c")
                 c_recent_speed = speed_forward
   
             # was previously [1400, 1500]
-            speed_backward = myround(translate(x_position, -1,1,1600,1400)) #backward
+            speed_backward = myround(translate(x_position, -1,1,speed_fb_max,speed_fb_min)) #backward
             if int(speed_backward) != d_recent_speed:
                 writeToSerial(str(int(speed_backward)) + "d")
                 d_recent_speed = speed_backward
-            speed_down = myround(translate(abs(x_position), 0,1,1500,1550))
+            speed_down = myround(translate(abs(x_position), 0,1,STOP_INT,speed_fb_d_max))
             if int(speed_down) != b_recent_speed:
                 writeToSerial(str(int(speed_down)) + "b")
                 b_recent_speed = speed_down
-            speed_up = myround(translate(abs(x_position), 0,1,1500,1450))
+            speed_up = myround(translate(abs(x_position), 0,1,STOP_INT,speed_fb_u_min))
             if int(speed_up) != a_recent_speed:
                 writeToSerial(str(int(speed_up)) + "a")
                 a_recent_speed = speed_up
@@ -113,12 +121,12 @@ while True:
             
         else :
             
-            speed_up_1 = myround(translate(y_position, -1,1,1600,1400)) #up
+            speed_up_1 = myround(translate(y_position, -1,1,speed_ud_max,speed_ud_min)) #up
             if int(speed_up_1) != a_recent_speed:
                 writeToSerial(str(int(speed_up_1)) + "a")
                 a_recent_speed = speed_up_1
 
-            speed_down_1 = myround(translate(y_position,-1,1,1400,1600)) #down
+            speed_down_1 = myround(translate(y_position,-1,1,speed_ud_min,speed_ud_max)) #down
             if int(speed_down_1) != b_recent_speed:
                 writeToSerial(str(int(speed_down_1)) + "b")
                 b_recent_speed = speed_down_1
