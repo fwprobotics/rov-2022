@@ -9,6 +9,7 @@ def myround(x, base=10):
 
 STOP_INT = 1500
 STOP = '1500'
+button_0 = STOP
 
 
 pygame.joystick.init()
@@ -35,7 +36,7 @@ speed_ud_max = 1700
 speed_ud_min = 1300
 
 
-speed_up_1 =0 
+speed_up_1 =0
 speed_down_1 = 0
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
@@ -48,7 +49,7 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 def writeToSerial(msg):
     print("writing", msg.encode())
     ser.write(msg.encode())
-    
+
 correctdevice = str()
 for port in serial.tools.list_ports.comports():
     if "com" in port.device.lower():
@@ -65,14 +66,25 @@ while True:
 
     for event in pygame.event.get():
         event_dict = event.dict
-        
+        print(event_dict)
+
         if counter % 50 ==0:
             if event.dict.get("axis") ==3 or event.dict.get("axis") == 2:
                 #if abs(event.dict.get("value")) > 0.1:
                 #    print(event.dict)
                 pass
         counter = counter +1
-        
+
+        if event_dict.get("joy") == 0:
+            if event_dict.get("button") == 0:
+                a_recent_speed = 1500
+                b_recent_speed = 1500
+                c_recent_speed = 1500
+                d_recent_speed = 1500
+                writeToSerial(str(int(a_recent_speed)) + "a")
+                writeToSerial(str(int(b_recent_speed)) + "b")
+                writeToSerial(str(int(c_recent_speed)) + "c")
+                writeToSerial(str(int(d_recent_speed)) + "d")
         
         if event_dict.get("axis") == 4:
             degrees=translate(event.dict.get("value"), -1,1,0,180)
@@ -82,28 +94,28 @@ while True:
             degrees = translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
             writeToSerial(str(int(degrees)) + "z")
-    
+
         if event_dict.get("axis") == 2: # thruster's going forward to backward (right joystick x axis)
             x_position = event.dict.get("value")
-            
+
             if int(x_position) != x_last_speed:
                 x_last_speed = x_position
-            
+
         if event_dict.get("axis") == 3: # thruster's going up and down (right joystick y axis)
             y_position = event.dict.get("value")
-            
+
             if int(y_position) != y_last_speed:
              y_last_speed = y_position
         #print(str(x_position) + "x   " + str(y_position) + "y")
-        
-        
+
+
         if abs(x_position)>abs(y_position) :
 
             speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
             if int(speed_forward) != c_recent_speed:
                 writeToSerial(str(int(speed_forward)) + "c")
                 c_recent_speed = speed_forward
-  
+
             # was previously [1400, 1500]
             speed_backward = myround(translate(x_position, -1,1,speed_fb_max,speed_fb_min)) #backward
             if int(speed_backward) != d_recent_speed:
@@ -118,9 +130,9 @@ while True:
                 writeToSerial(str(int(speed_up)) + "a")
                 a_recent_speed = speed_up
             print(str(speed_backward) + "d    " + str(speed_forward) + "c   " + str(speed_down) + "b  " + str(speed_up) + "a  ")
-            
+
         else :
-            
+
             speed_up_1 = myround(translate(y_position, -1,1,speed_ud_max,speed_ud_min)) #up
             if int(speed_up_1) != a_recent_speed:
                 writeToSerial(str(int(speed_up_1)) + "a")
@@ -130,7 +142,7 @@ while True:
             if int(speed_down_1) != b_recent_speed:
                 writeToSerial(str(int(speed_down_1)) + "b")
                 b_recent_speed = speed_down_1
-                
+
             # Zero out the forward/backward directions
             if c_recent_speed != STOP_INT:
                 writeToSerial(STOP + "c")
@@ -139,10 +151,11 @@ while True:
                 writeToSerial(STOP + "d")
                 d_recent_speed = STOP_INT
             print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
-            
+
 log_file.close()
 
 pygame.time.wait(15)
 out = ser.readline()
 if out:
     print(out.decode(), end = '')
+    
