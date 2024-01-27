@@ -8,8 +8,8 @@ void setup() {
 }
 
 void loop() {
-  myProDriver.step(145000, 1); // 0 goes up/away from the tip
+  myProDriver.step(145000, 0); // 0 goes up/away from the tip
   delay(1000);
-  myProDriver.step(145000, 0); // 1 goes down/towards the tip
+  myProDriver.step(145000, 1); // 1 goes down/towards the tip
   delay(1000);
 }
