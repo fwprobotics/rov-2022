@@ -21,7 +21,7 @@ void setup() { // put your setup code here, to run once:
   mythruster_forward.attach(4);
   mythruster_backward.attach(5);
 
-  delay(1000);
+  delay(7000);
   Serial.println("Start!");
 
 
@@ -38,13 +38,13 @@ if(Serial.available()){
   } if(ch =='z'){
     myservo_2.write(speed);
   } if(ch=='a'){
-    mythruster_up.writeMicroseconds(speed)
+    mythruster_up.writeMicroseconds(speed);
   } if(ch=='b'){
-    mythruster_down.writeMicroseconds(speed)
+    mythruster_down.writeMicroseconds(speed);
   } if (ch=='c'){
-    mythruster_forward.writeMicroseconds(speed)
+    mythruster_forward.writeMicroseconds(speed);
   } if (ch=='d'){
-    mythruster_backward.writeMicroseconds(speed)
+    mythruster_backward.writeMicroseconds(speed);
   }
 }
 }
