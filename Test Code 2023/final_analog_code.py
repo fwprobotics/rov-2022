@@ -28,12 +28,12 @@ b_recent_speed = 0
 c_recent_speed = 0
 d_recent_speed = 0
 
-speed_fb_min = 1300
-speed_fb_max = 1700
-speed_fb_d_max = 1600
-speed_fb_u_min = 1400
-speed_ud_max = 1700
-speed_ud_min = 1300
+speed_fb_min = 1300 #forward & backward minimum
+speed_fb_max = 1700 #forward & backward maximum
+speed_fb_d_max = 1600 #forward & backward & down maximum
+speed_fb_u_min = 1400 #forward & backward & up minimum
+speed_ud_max = 1700 #up & down maximum
+speed_ud_min = 1300 #up & down minimum
 
 
 speed_up_1 =0
@@ -85,7 +85,7 @@ while True:
                 writeToSerial(str(int(b_recent_speed)) + "b")
                 writeToSerial(str(int(c_recent_speed)) + "c")
                 writeToSerial(str(int(d_recent_speed)) + "d")
-        
+
         if event_dict.get("axis") == 4:
             degrees=translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
@@ -97,17 +97,24 @@ while True:
 
         if event_dict.get("axis") == 2: # thruster's going forward to backward (right joystick x axis)
             x_position = event.dict.get("value")
-
             if int(x_position) != x_last_speed:
                 x_last_speed = x_position
 
         if event_dict.get("axis") == 3: # thruster's going up and down (right joystick y axis)
             y_position = event.dict.get("value")
-
             if int(y_position) != y_last_speed:
-             y_last_speed = y_position
+                y_last_speed = y_position
         #print(str(x_position) + "x   " + str(y_position) + "y")
-
+    
+        if event_dict.get("axis") == 0: # thruster's pitching up and down (left joystick y axis)
+            y_position = event.dict.get("value") # DOUBLE CHECK
+            if int(y_position) != y_last_speed: # DOUBLE CHECK
+                y_last_speed = y_position # DOUBLE CHECK
+    
+        if event_dict.get("axis") == 1: # thruster's rolling left and right (left joystick x axis)
+            x_position = event.dict.get(value) # DOUBLE CHECK
+            if int(x_position) != x_last_speed: # DOUBLE CHECK
+                x_last_speed = x_position # DOUBLE CHECK
 
         if abs(x_position)>abs(y_position) :
 
@@ -152,10 +159,11 @@ while True:
                 d_recent_speed = STOP_INT
             print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
 
+
 log_file.close()
 
 pygame.time.wait(15)
 out = ser.readline()
 if out:
     print(out.decode(), end = '')
-    
+
