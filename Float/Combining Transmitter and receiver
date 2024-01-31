@@ -1,0 +1,35 @@
+#include <RH_ASK.h>
+#include <SPI.h> // Not actually used but needed to compile
+#include <TimeLib.h>
+#include "SparkFun_ProDriver_TC78H670FTG_Arduino_Library.h" //Click here to get the library: http://librarymanager/All#SparkFun_ProDriver
+PRODRIVER myProDriver; //Create instance of this object
+
+RH_ASK driver;
+int counter=0;
+
+void setup()
+{
+    Serial.begin(9600);	  // Debugging only
+    if (!driver.init())
+         Serial.println("init failed");
+    myProDriver.begin(); // default settings
+}
+
+void loop()
+{
+  time_t t = now(); // store the current time in time variable t 
+  double pressure = 10.45;
+  char pressureStr[5];
+
+    char timeStamp[23];
+    dtostrf(pressure, 2, 2, pressureStr);
+    sprintf(timeStamp, "EX01 %02d:%02d:%02d %5skpa", hour(t), minute(t), second(t), pressureStr);
+    const char *msg =  timeStamp;
+    driver.send((uint8_t *)msg, strlen(msg));
+    driver.waitPacketSent(); 
+    // delay(1000);
+    if (counter >= 0 && counter <= 90) {
+      myProDriver.step(250, 1);
+      counter = counter+1;
+    }
+}
