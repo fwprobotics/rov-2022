@@ -6,12 +6,21 @@ RH_ASK driver;
 #include <Wire.h>
 #include "MS5837.h"
 
+#include "SparkFun_ProDriver_TC78H670FTG_Arduino_Library.h" //Click here to get the library: http://librarymanager/All#SparkFun_ProDriver
+PRODRIVER myProDriver; //Create instance of this object
+int counter=0;
+int direction = 1;
+
+///1 means that the pump is at the top of the tip
+///0 means that the pump is at the bottem of the tip
+
 MS5837 sensor;
 void setup()
 {
-    Serial.begin(9600);	  // Debugging only
+    Serial.begin(115200);
 
   Serial.println("Starting");
+  myProDriver.begin(); // default settings
 
   Wire.begin();
 
@@ -36,6 +45,8 @@ void setup()
 
   sensor.setFluidDensity(997); // kg/m^3 (freshwater, 1029 for seawater)
   sensor.read();
+
+  
 }
 
 void loop()
@@ -55,6 +66,20 @@ void loop()
     const char *msg =  timeStamp;
     driver.send((uint8_t *)msg, strlen(msg));
     driver.waitPacketSent(); 
-    delay(1000);
-}
+  if (counter >= 0 && counter <= 60) {
+      myProDriver.step(250,direction);
+      delay(1000);
+      counter = counter+1;
+      Serial.println(counter);
+ }
+ else {
+    counter = 0;
+    if(direction == 1){
+      direction = 0;
+    }else{
+      direction = 1;
+    }
+    delay(60000);
 
+ }
+}
