@@ -48,8 +48,8 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 
 def writeToSerial(msg):
     print("writing", msg.encode())
-    #ser.write(msg.encode())
-    fakeSerial.writeToSerial(msg)
+    ser.write(msg.encode())
+    #fakeSerial.writeToSerial(msg)
 
 correctdevice = str()
 for port in serial.tools.list_ports.comports():
@@ -75,21 +75,21 @@ while True:
 
         if event_dict.get("axis") == 3: #right joystick y-axis
             right_y_position = event.dict.get("value")
-    
+
         if event_dict.get("axis") == 1: #left joystick y-axis
             left_y_position = event.dict.get("value") # DOUBLE CHECK
 
         if event_dict.get("axis") == 0: #left joystick x-axis
             left_x_position = event.dict.get("value") # DOUBLE CHECK
-    
+
         if event_dict.get("axis") == 4: #left trigger position; double check
             left_trigger_position = event.dict.get("value")
-    
+
         if event_dict.get("axis") ==5: #right trigger position; double check
             right_trigger_position = event.dict.get("value")
 
 # map controller buttons to commanded directions
-        forward_speed = right_x_position 
+        forward_speed = right_x_position
         up_speed = -right_y_position
         pitch_speed = -left_y_position * 0.6
         right_speed = left_x_position * 0.6 #scale down turning commands
@@ -101,16 +101,16 @@ while True:
         b_command = 0 #down (back)
         c_command = 0 #forward (right)
         d_command = 0 #backward (left)
-        
+
         c_command += forward_speed
         d_command += -forward_speed
-        
+
         a_command += up_speed
         b_command += -up_speed
-        
+
         a_command += pitch_speed
         b_command += pitch_speed
-        
+
         c_command += right_speed
         d_command += right_speed
 
