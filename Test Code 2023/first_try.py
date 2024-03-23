@@ -50,12 +50,18 @@ def writeToSerial(msg):
     print("writing", msg.encode())
     ser.write(msg.encode())
 
+def readIncomingMessages():
+    try:
+        return ser.read(500).decode()
+    except serial.serialutil.SerialTimeoutException:
+        return ''
+
 correctdevice = str()
 for port in serial.tools.list_ports.comports():
     if "com" in port.device.lower():
         correctdevice = port.device
 print("Using serial port: ", correctdevice)
-ser = serial.Serial(correctdevice, 19200, timeout=0.005)
+ser = serial.Serial(correctdevice, 19200, timeout=0.008)
 
 servoOpen = 180
 servoClosed = 0
@@ -66,7 +72,7 @@ while True:
 
     for event in pygame.event.get():
         event_dict = event.dict
-        print(event_dict)
+        # print(event_dict)
 
         if counter % 50 ==0:
             if event.dict.get("axis") ==3 or event.dict.get("axis") == 2:
@@ -105,7 +111,7 @@ while True:
             if int(y_position) != y_last_speed:
                 y_last_speed = y_position
         #print(str(x_position) + "x   " + str(y_position) + "y")
-    
+        """
         if event_dict.get("axis") == 0: # thruster's pitching up and down (left joystick y axis)
             y_position = event.dict.get("value") # DOUBLE CHECK
             if int(y_position) != y_last_speed: # DOUBLE CHECK
@@ -115,7 +121,7 @@ while True:
             x_position = event.dict.get(value) # DOUBLE CHECK
             if int(x_position) != x_last_speed: # DOUBLE CHECK
                 x_last_speed = x_position # DOUBLE CHECK
-
+        """
         if abs(x_position)>abs(y_position) :
 
             speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
@@ -157,13 +163,17 @@ while True:
             if d_recent_speed != STOP_INT:
                 writeToSerial(STOP + "d")
                 d_recent_speed = STOP_INT
-            print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
+            #print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
+            
+        incoming = readIncomingMessages()
+        if incoming:
+            print(incoming)
 
 
-log_file.close()
+#log_file.close()
 
 pygame.time.wait(15)
 out = ser.readline()
 if out:
     print(out.decode(), end = '')
-
+# Write your code here :-)
