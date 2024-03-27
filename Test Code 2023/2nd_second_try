@@ -2,19 +2,13 @@ import json
 import pygame
 import serial
 import serial.tools.list_ports
-
-import fakeSerial
-
 def myround(x, base=10):
     return base * round(x/base)
-def readIncomingMessages():
-    try:
-        return ser.read(500).decode()
-    except serial.serialutil.SerialTimeoutException:
-        return ''
+import time 
 
 
-
+SEND_EVERY = 0.05
+last_send_time = 0
 STOP_INT = 1500
 STOP = '1500'
 button_0 = STOP
@@ -26,19 +20,22 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 print(joysticks)
 pygame.init()
 
-right_x_position = 0
-right_y_position = 0
-left_x_position = 0
-left_y_position = 0
-right_trigger_position = -1
-left_trigger_position = -1
+x_last_speed = 0
+y_last_speed = 0
+x_position = 0
+y_position = 0
 
-speed_fb_min = 1400 #forward & backward minimum
-speed_fb_max = 1600 #forward & backward maximum
+a_recent_speed = 0
+b_recent_speed = 0
+c_recent_speed = 0
+d_recent_speed = 0
+
+speed_fb_min = 1300 #forward & backward minimum
+speed_fb_max = 1700 #forward & backward maximum
 speed_fb_d_max = 1600 #forward & backward & down maximum
 speed_fb_u_min = 1400 #forward & backward & up minimum
-speed_ud_max = 1600 #up & down maximum
-speed_ud_min = 1400 #up & down minimum
+speed_ud_max = 1700 #up & down maximum
+speed_ud_min = 1300 #up & down minimum
 
 
 speed_up_1 =0
@@ -52,9 +49,14 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     return rightMin + (valueScaled * rightSpan)
 
 def writeToSerial(msg):
-    #print("writing", msg.encode())
+    print("writing", msg.encode())
     ser.write(msg.encode())
-    #fakeSerial.writeToSerial(msg)
+
+def readIncomingMessages():
+    try:
+        return ser.read(500).decode()
+    except serial.serialutil.SerialTimeoutException:
+        return ''
 
 correctdevice = str()
 for port in serial.tools.list_ports.comports():
@@ -72,78 +74,18 @@ while True:
 
     for event in pygame.event.get():
         event_dict = event.dict
-        #print(event_dict)
-        
-        triggers_moved = False
+        # print(event_dict)
 
-#which button is being pressed?
-        if event_dict.get("axis") == 2: #right joystick x-axis
-            right_x_position = event.dict.get("value")
-
-        if event_dict.get("axis") == 3: #right joystick y-axis
-            right_y_position = event.dict.get("value")
-
-        if event_dict.get("axis") == 1: #left joystick y-axis
-            left_y_position = event.dict.get("value") # DOUBLE CHECK
-
-        if event_dict.get("axis") == 0: #left joystick x-axis
-            left_x_position = event.dict.get("value") # DOUBLE CHECK
-
-        if event_dict.get("axis") == 4: #left trigger position; double check
-            left_trigger_position = event.dict.get("value")
-            triggers_moved = True
-
-        if event_dict.get("axis") ==5: #right trigger position; double check
-            right_trigger_position = event.dict.get("value")
-            triggers_moved = True
-
-# map controller buttons to commanded directions
-        forward_speed = right_x_position
-        up_speed = -right_y_position
-        pitch_speed = -left_y_position * 0.6
-        right_speed = left_x_position * 0.6 #scale down turning commands
-        servo_1 = left_trigger_position
-        servo_2 = right_trigger_position
-        # If something is flipped, add or remove a negative in front of it
-
-# map command directions to thruster commands
-        a_command = 0 #up (front)
-        b_command = 0 #down (back)
-        c_command = 0 #forward (right)
-        d_command = 0 #backward (left)
-
-        c_command += forward_speed
-        d_command += -forward_speed
-
-        a_command += up_speed
-        b_command += -up_speed
-
-        a_command += pitch_speed
-        b_command += pitch_speed
-
-        c_command += right_speed
-        d_command += right_speed
-
-# map the thruster commands to their pwm value
-        a_pwm = translate(a_command, -1, 1, 1200, 1800)
-        b_pwm = translate(b_command, -1, 1, 1200, 1800)
-        c_pwm = translate(c_command, -1, 1, 1200, 1800)
-        d_pwm = translate(d_command, -1, 1, 1200, 1800)
-        servo_1_pwm = translate(servo_1, -1, 1, 0, 180)
-        servo_2_pwm = translate(servo_2, -1, 1, 0, 180)
-
-# send pwm to arduino
-        writeToSerial(str(int(a_pwm)) + "a")
-        writeToSerial(str(int(b_pwm)) + "b")
-        writeToSerial(str(int(c_pwm)) + "c")
-        writeToSerial(str(int(d_pwm)) + "d")
-        if triggers_moved:
-            writeToSerial(str(int(servo_1_pwm)) + "y")
-            writeToSerial(str(int(servo_2_pwm)) + "z")
-
-
+        if counter % 50 ==0:
+            if event.dict.get("axis") ==3 or event.dict.get("axis") == 2:
+                #if abs(event.dict.get("value")) > 0.1:
+                #    print(event.dict)
+                pass
+        counter = counter +1
 
         if event_dict.get("joy") == 0:
+            SEND_EVERY = 0.05
+            last_send_time = 0
             if event_dict.get("button") == 0:
                 a_recent_speed = 1500
                 b_recent_speed = 1500
@@ -153,16 +95,113 @@ while True:
                 writeToSerial(str(int(b_recent_speed)) + "b")
                 writeToSerial(str(int(c_recent_speed)) + "c")
                 writeToSerial(str(int(d_recent_speed)) + "d")
-                
+
+        if event_dict.get("axis") == 4:
+            degrees=translate(event.dict.get("value"), -1,1,0,180)
+            print(degrees)
+            current_time = time.time()
+            if current_time > last_send_time + SEND_EVERY:
+                last_send_time = current_time
+                writeToSerial(str(int(degrees)) + "y")
+        if event_dict.get("axis") ==5:
+            degrees = translate(event.dict.get("value"), -1,1,0,180)
+            print(degrees)
+            current_time = time.time()
+            if current_time > last_send_time + SEND_EVERY:
+                last_send_time = current_time
+                writeToSerial(str(int(degrees)) + "z")
+
+        if event_dict.get("axis") == 2: # thruster's going forward to backward (right joystick x axis)
+            x_position = event.dict.get("value")
+            if int(x_position) != x_last_speed:
+                x_last_speed = x_position
+
+        if event_dict.get("axis") == 3: # thruster's going up and down (right joystick y axis)
+            y_position = event.dict.get("value")
+            if int(y_position) != y_last_speed:
+                y_last_speed = y_position
+        #print(str(x_position) + "x   " + str(y_position) + "y")
+        """
+        if event_dict.get("axis") == 0: # thruster's pitching up and down (left joystick y axis)
+            y_position = event.dict.get("value") # DOUBLE CHECK
+            if int(y_position) != y_last_speed: # DOUBLE CHECK
+                y_last_speed = y_position # DOUBLE CHECK
+    
+        if event_dict.get("axis") == 1: # thruster's rolling left and right (left joystick x axis)
+            x_position = event.dict.get(value) # DOUBLE CHECK
+            if int(x_position) != x_last_speed: # DOUBLE CHECK
+                x_last_speed = x_position # DOUBLE CHECK
+        """
+        if abs(x_position)>abs(y_position) :
+
+            speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
+            if int(speed_forward) != c_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_forward)) + "c")
+                    c_recent_speed = speed_forward
+
+            # was previously [1400, 1500]
+            speed_backward = myround(translate(x_position, -1,1,speed_fb_max,speed_fb_min)) #backward
+            if int(speed_backward) != d_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_backward)) + "d")
+                d_recent_speed = speed_backward
+            speed_down = myround(translate(abs(x_position), 0,1,STOP_INT,speed_fb_d_max))
+            if int(speed_down) != b_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_down)) + "b")
+                    b_recent_speed = speed_down
+            speed_up = myround(translate(abs(x_position), 0,1,STOP_INT,speed_fb_u_min))
+            if int(speed_up) != a_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_up)) + "a")
+                    a_recent_speed = speed_up
+            print(str(speed_backward) + "d    " + str(speed_forward) + "c   " + str(speed_down) + "b  " + str(speed_up) + "a  ")
+
+        else :
+
+            speed_up_1 = myround(translate(y_position, -1,1,speed_ud_max,speed_ud_min)) #up
+            if int(speed_up_1) != a_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_up_1)) + "a")
+                    a_recent_speed = speed_up_1
+
+            speed_down_1 = myround(translate(y_position,-1,1,speed_ud_min,speed_ud_max)) #down
+            if int(speed_down_1) != b_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_down_1)) + "b")
+                    b_recent_speed = speed_down_1
+
+            # Zero out the forward/backward directions
+            if c_recent_speed != STOP_INT:
+                writeToSerial(STOP + "c")
+                c_recent_speed = STOP_INT
+            if d_recent_speed != STOP_INT:
+                writeToSerial(STOP + "d")
+                d_recent_speed = STOP_INT
+            #print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
+            
         incoming = readIncomingMessages()
         if incoming:
             print(incoming)
 
-log_file.close()
+
+#log_file.close()
 
 pygame.time.wait(15)
 out = ser.readline()
 if out:
     print(out.decode(), end = '')
-
 # Write your code here :-)
