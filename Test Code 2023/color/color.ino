@@ -8,10 +8,10 @@ Servo mythruster_backward;
 Servo mythruster_up;
 Servo mythruster_down;
 
-int blue = 2;
-int red = 3;
-int green = 4;
-int white = 5; 
+int blue = 8;
+int red = 9;
+int green = 10;
+int white = 11; 
 
 
 
