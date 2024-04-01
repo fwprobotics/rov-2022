@@ -12,6 +12,7 @@ int blue = 2;
 int red = 3;
 int green = 4;
 int white = 5; 
+int yellow = 6;
 
 
 
@@ -32,6 +33,7 @@ void setup() { // put your setup code here, to run once:
   pinMode(red, OUTPUT);
   pinMode(green, OUTPUT);
   pinMode(white, OUTPUT);
+  pinMode(yellow, OUTPUT);
 
 
 }
