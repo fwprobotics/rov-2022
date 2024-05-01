@@ -103,9 +103,9 @@ void loop() {
   else if (state == RETRACTING) {
     collect_data();
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 3; i++) {
       myProDriver.step(250, direction);
-      delay(833);
+      delay(733);
     }
     time_in_state_s += 5;
     Serial.print("RETRACTING ");
@@ -171,6 +171,9 @@ void loop() {
   else if (state == SURFACE) {
     for (int i = 0; i < count; i++) {
       char *msg = messages[i];
+      Serial.println(*msg);
+      Serial.println(msg);
+//      Serial.println((uint8_t *)msg);
       driver.send((uint8_t *)msg, strlen(msg));
 
       driver.waitPacketSent();
