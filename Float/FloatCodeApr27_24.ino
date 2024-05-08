@@ -80,11 +80,11 @@ void collect_data()
   //Serial.println(depth);
 
   char pressureStr[7];
-
   char timeStamp[23];
   dtostrf(pressure, 2, 2, pressureStr);
-  sprintf(timeStamp, "EX01 %02d:%02d:%02d %7s kpa", hour(t), minute(t), second(t), pressureStr);
-  char *msg =  timeStamp;
+  char *msg =  "";
+  sprintf(msg, "EX01 %02d:%02d:%02d %7s kpa\0", hour(t), minute(t), second(t), pressureStr);
+  
   //driver.send((uint8_t *)msg, strlen(msg));
 
   messages[count] = msg;
@@ -169,9 +169,12 @@ void loop() {
     }
   }
   else if (state == SURFACE) {
+    Serial.println("COUNT");
+    Serial.println(count);
+    const char *msg = "";
     for (int i = 0; i < count; i++) {
-      const char *msg = messages[i];
-      Serial.println(*msg);
+      msg = messages[i];
+//      Serial.println(*msg);
       Serial.println(msg);
 //      Serial.println((uint8_t *)msg);
       driver.send((uint8_t *)msg, strlen(msg));
@@ -188,4 +191,3 @@ void loop() {
     }
   }
 }
-
