@@ -25,7 +25,7 @@ state_t state = DELAY;
 
 int time_in_state_s = 0;
 
-char* messages[60] = {};
+const char* messages[60] = {};
 int count = 0;  // the number of messages in the array to send
 int times = 0;  // the number of times we've been in the surface state
 
@@ -110,7 +110,7 @@ void loop() {
     time_in_state_s += 5;
     Serial.print("RETRACTING ");
     Serial.println(time_in_state_s);
-    if (time_in_state_s >= 60) {
+    if (time_in_state_s >= 87) {
       state = SINKING;
       time_in_state_s = 0;
       direction = 1;
@@ -143,14 +143,14 @@ void loop() {
   else if (state == EXTENDING) {
     collect_data();
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 3; i++) {
       myProDriver.step(250, direction);
-      delay(833);
+      delay(733);
     }
     time_in_state_s += 5;
     Serial.print("EXTENDING ");
     Serial.println(time_in_state_s);
-    if (time_in_state_s >= 60) {
+    if (time_in_state_s >= 87) {
       state = FLOATING;
       time_in_state_s = 0;
       direction = 0;
@@ -170,7 +170,7 @@ void loop() {
   }
   else if (state == SURFACE) {
     for (int i = 0; i < count; i++) {
-      char *msg = messages[i];
+      const char *msg = messages[i];
       Serial.println(*msg);
       Serial.println(msg);
 //      Serial.println((uint8_t *)msg);
