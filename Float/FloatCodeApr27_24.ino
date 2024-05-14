@@ -25,7 +25,13 @@ state_t state = DELAY;
 
 int time_in_state_s = 0;
 
-const char* messages[60] = {};
+struct pressure_data_t{
+    double pressure;
+    time_t time;
+};
+
+pressure_data_t pressure_data[62];
+//const char messages[62][26] = {};
 int count = 0;  // the number of messages in the array to send
 int times = 0;  // the number of times we've been in the surface state
 
@@ -61,11 +67,8 @@ void setup()
   // Uncomment the next line to force the sensor model to the MS5837_30BA.
   //sensor.setModel(MS5837::MS5837_30BA);
 
-
   sensor.setFluidDensity(997); // kg/m^3 (freshwater, 1029 for seawater)
   sensor.read();
-
-
 }
 
 void collect_data()
@@ -73,24 +76,16 @@ void collect_data()
   time_t t = now(); // store the current time in time variable t
 
   sensor.read();
-  double pressure = sensor.pressure() * 0.1;
+  //double pressure = sensor.pressure() * 0.1;
   //Serial.println(pressure);
   //depth = pressure / (997 * 9.80665);
-  //   double pressure = 8898.88;
   //Serial.println(depth);
 
-  char pressureStr[7];
-  char timeStamp[23];
-  dtostrf(pressure, 2, 2, pressureStr);
-  char *msg =  "";
-  sprintf(msg, "EX01 %02d:%02d:%02d %7s kpa\0", hour(t), minute(t), second(t), pressureStr);
-  
-  //driver.send((uint8_t *)msg, strlen(msg));
+  pressure_data[count].time = now();
+  pressure_data[count].pressure = sensor.pressure() * 0.1f;
 
-  messages[count] = msg;
-  Serial.println(messages[count]);
   count = count + 1;
-
+  
 }
 
 void loop() {
@@ -171,15 +166,19 @@ void loop() {
   else if (state == SURFACE) {
     Serial.println("COUNT");
     Serial.println(count);
-    const char *msg = "";
+ 
+    char msg[24];
     for (int i = 0; i < count; i++) {
-      msg = messages[i];
-//      Serial.println(*msg);
-      Serial.println(msg);
-//      Serial.println((uint8_t *)msg);
-      driver.send((uint8_t *)msg, strlen(msg));
-
-      driver.waitPacketSent();
+        time_t t = pressure_data[i].time;
+        double pressure = pressure_data[i].pressure;
+        
+        char pressureStr[7];
+        dtostrf(pressure, 2, 2, pressureStr);
+        Serial.println(pressureStr);
+        snprintf(msg, sizeof(msg), "RN07 %02d:%02d:%02d %s kpa", hour(t), minute(t), second(t), pressureStr);
+        Serial.println(msg);
+        driver.send((uint8_t *)msg, strlen(msg));
+        driver.waitPacketSent();
     }
     count = 0;
     Serial.print("SURFACE");
