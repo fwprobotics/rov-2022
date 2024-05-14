@@ -167,7 +167,7 @@ void loop() {
     Serial.println("COUNT");
     Serial.println(count);
  
-    char msg[24];
+    char msg[25];
     for (int i = 0; i < count; i++) {
         time_t t = pressure_data[i].time;
         double pressure = pressure_data[i].pressure;
