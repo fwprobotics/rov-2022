@@ -1,9 +1,10 @@
+#joysticks are switched around bc why not
 import json
 import pygame
 import serial
 import serial.tools.list_ports
 
-import fakeSerial
+import serial
 
 def myround(x, base=10):
     return base * round(x/base)
@@ -150,4 +151,4 @@ out = ser.readline()
 if out:
     print(out.decode(), end = '')
 
-# Write your code here :-)
+# Write your code here :-)# Write your code here :-)
