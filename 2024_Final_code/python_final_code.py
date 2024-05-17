@@ -130,7 +130,7 @@ while True:
                 y_last_speed = y_position # DOUBLE CHECK
 
         if event_dict.get("axis") == 1: # thruster's rolling left and right (left joystick x axis)
-            x_position = event.dict.get(value) # DOUBLE CHECK
+            x_position = event.dict.get("value") # DOUBLE CHECK
             if int(x_position) != x_last_speed: # DOUBLE CHECK
                 x_last_speed = x_position # DOUBLE CHECK
         """
@@ -145,7 +145,7 @@ while True:
                     c_recent_speed = speed_forward
 
             # was previously [1400, 1500]
-            speed_backward = myround(translate(x_position, -1,1,speed_fb_max,speed_fb_min)) #backward
+            speed_backward = myround(translate(x_position, 1,-1,speed_fb_max,speed_fb_min)) #backward
             if int(speed_backward) != d_recent_speed:
                 current_time = time.time()
                 if current_time > last_send_time + SEND_EVERY:
