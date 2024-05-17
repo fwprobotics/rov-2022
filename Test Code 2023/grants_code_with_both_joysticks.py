@@ -1,4 +1,4 @@
-#joysticks are switched around bc why not
+#joysticks are switched around, left joystick goes up, down, forwards, backwards; right joystick pitches and rolls
 import json
 import pygame
 import serial
