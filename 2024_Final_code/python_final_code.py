@@ -36,8 +36,8 @@ speed_fb_min = 1300 #forward & backward minimum
 speed_fb_max = 1700 #forward & backward maximum
 speed_fb_d_max = 1600 #forward & backward & down maximum
 speed_fb_u_min = 1400 #forward & backward & up minimum
-speed_ud_max = 1700 #up & down maximum
-speed_ud_min = 1300 #up & down minimum
+speed_ud_max = 1600 #up & down maximum #changed value to 1600
+speed_ud_min = 1400 #up & down minimum #changed value to 1400
 
 
 speed_up_1 =0
@@ -123,17 +123,18 @@ while True:
             if int(y_position) != y_last_speed:
                 y_last_speed = y_position
         #print(str(x_position) + "x   " + str(y_position) + "y")
-        """
-        if event_dict.get("axis") == 0: # thruster's pitching up and down (left joystick y axis)
-            y_position = event.dict.get("value") # DOUBLE CHECK
-            if int(y_position) != y_last_speed: # DOUBLE CHECK
-                y_last_speed = y_position # DOUBLE CHECK
 
-        if event_dict.get("axis") == 1: # thruster's rolling left and right (left joystick x axis)
-            x_position = event.dict.get("value") # DOUBLE CHECK
-            if int(x_position) != x_last_speed: # DOUBLE CHECK
-                x_last_speed = x_position # DOUBLE CHECK
-        """
+        if event_dict.get("axis") == 1: # thruster's pitching up and down (left joystick y axis)
+            y_position = event.dict.get("value") 
+            if int(y_position) != y_last_speed:
+                y_last_speed = y_position 
+
+        if event_dict.get("axis") == 0: # thruster's yawing left and right (left joystick x axis)
+            x_position = event.dict.get("value") 
+            if int(x_position) != x_last_speed: 
+                x_last_speed = x_position 
+                y_last_speed = y_position 
+
         if abs(x_position)>abs(y_position) :
 
             speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
