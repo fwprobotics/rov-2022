@@ -23,6 +23,9 @@ void setup() { // put your setup code here, to run once:
   mythruster_forward.attach(3);
   mythruster_backward.attach(7);
 
+  pinMode(2, OUTPUT);
+  pinMode(6, OUTPUT);
+
   delay(7000);
   Serial.println("Start!");
 
@@ -47,8 +50,12 @@ void loop() {
     char ch = Serial.read();
     if(ch=='y'){
       myservo_1.write(speed);
+      digitalWrite(2, HIGH);
+      digitalWrite(2, LOW);
     } if(ch =='z'){
       myservo_2.write(speed);
+      digitalWrite(6, HIGH);
+      digitalWrite(6, LOW);
     } if(ch=='a'){
       mythruster_up.writeMicroseconds(speed);
     } if(ch=='b'){
@@ -59,4 +66,6 @@ void loop() {
       mythruster_backward.writeMicroseconds(speed);
     }
   }
+
+  
 }
