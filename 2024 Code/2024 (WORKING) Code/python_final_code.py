@@ -98,8 +98,11 @@ while True:
                 writeToSerial(str(int(c_recent_speed)) + "c")
                 writeToSerial(str(int(d_recent_speed)) + "d")
 
+        if event_dict.get("button") == 10:
+            writeToSerial(str(int("z")
+
         if event_dict.get("axis") == 4:
-            degrees=translate(event.dict.get("value"), -1,1,0,180)
+            degrees = translate(event.dict.get("value"), -1,1,0,180)
             print(degrees)
             current_time = time.time()
             if current_time > last_send_time + SEND_EVERY:
@@ -125,15 +128,15 @@ while True:
         #print(str(x_position) + "x   " + str(y_position) + "y")
 
         if event_dict.get("axis") == 1: # thruster's pitching up and down (left joystick y axis)
-            y_position = event.dict.get("value") 
+            y_position = event.dict.get("value")
             if int(y_position) != y_last_speed:
-                y_last_speed = y_position 
+                y_last_speed = y_position
 
         if event_dict.get("axis") == 0: # thruster's yawing left and right (left joystick x axis)
-            x_position = event.dict.get("value") 
-            if int(x_position) != x_last_speed: 
-                x_last_speed = x_position 
-                y_last_speed = y_position 
+            x_position = event.dict.get("value")
+            if int(x_position) != x_last_speed:
+                x_last_speed = x_position
+                y_last_speed = y_position
 
         if abs(x_position)>abs(y_position) :
 
