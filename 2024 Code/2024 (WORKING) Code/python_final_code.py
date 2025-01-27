@@ -99,7 +99,7 @@ while True:
                 writeToSerial(str(int(d_recent_speed)) + "d")
 
         if event_dict.get("button") == 10:
-            writeToSerial(str(int("z")
+            writeToSerial(str("10l")) # 10 doesnt matter just needs to be there because code expects it
 
         if event_dict.get("axis") == 4:
             degrees = translate(event.dict.get("value"), -1,1,0,180)
