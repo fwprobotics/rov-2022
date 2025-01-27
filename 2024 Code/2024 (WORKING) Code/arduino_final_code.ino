@@ -10,6 +10,8 @@ Servo mythruster_forward;
 Servo mythruster_backward;
 Servo mythruster_up;
 Servo mythruster_down;
+bool on = false;
+unsigned long mytime = millis();
 
 // TSYS01 sensor;
 
@@ -51,13 +53,20 @@ void loop() {
     char ch = Serial.read();
     if(ch=='y'){
       myservo_1.write(speed);
-      digitalWrite(2, HIGH);
-      digitalWrite(2, LOW);
     } if(ch =='z'){
       myservo_2.write(speed);
+    } if (ch=='l' && on==false && millis()-mytime > 500){
       digitalWrite(6, HIGH);
+      mytime = millis();
+      on = true;
+    } if (ch=='l' && on==true && millis()-mytime > 500){
       digitalWrite(6, LOW);
-    } if(ch=='a'){
+      mytime = millis();
+      on = false;
+      
+    
+      // digitalWrite(2, LOW);
+    }if(ch=='a'){
       mythruster_up.writeMicroseconds(speed);
     } if(ch=='b'){
       mythruster_down.writeMicroseconds(speed);
