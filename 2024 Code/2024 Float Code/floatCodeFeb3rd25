@@ -99,7 +99,7 @@ void loop() {
   else if (state == RETRACTING) {
     collect_data();
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) { //could also change # of repetitions here
       myProDriver.step(250, direction); //I think we can change the # of steps here and in the extending section to make it descend to the correct depth-- if we do this we will also have to change the delay to make the time spent rotating plus the delay equal to five seconds
       delay(733);
     }
