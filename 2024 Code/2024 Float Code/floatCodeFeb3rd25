@@ -31,7 +31,6 @@ struct pressure_data_t{
 };
 
 pressure_data_t pressure_data[62];
-int 
 
 //const char messages[62][26] = {};
 int count = 0;  // the number of messages in the array to send
