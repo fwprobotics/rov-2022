@@ -20,7 +20,7 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 print(joysticks)
 pygame.init()
 
-
+THRESHOLD = 0.8
 
 x_last_speed = 0
 y_last_speed = 0
@@ -143,34 +143,10 @@ while True:
                 p_last_speed = p_position
 
 
-        if abs(s_position)>abs(p_position) and abs(s_position)>abs(x_position) and abs(s_position)>abs(y_position) : # x should be preferred (turn right(yaw))
 
-            speed_forward = myround(translate(s_position,-1,1,1700,1500)) #turn right
-            if int(speed_forward) != c_recent_speed:
-                current_time = time.time()
-                if current_time > last_send_time + SEND_EVERY:
-                    last_send_time = current_time
-                    writeToSerial(str(int(speed_forward)) + "c") # c is forward thruster
-                    c_recent_speed = speed_forward
 
-            # was previously [1400, 1500]
-            speed_backward = myround(translate(s_position, 1,-1,1700,1500)) #turn left
-            if int(speed_backward) != d_recent_speed:
-                current_time = time.time()
-                if current_time > last_send_time + SEND_EVERY:
-                    last_send_time = current_time
-                    writeToSerial(str(int(speed_backward)) + "d") # d is backward thruster
-                    d_recent_speed = speed_backward
-                    
-            if a_recent_speed != STOP_INT:
-                writeToSerial(STOP + "a")
-                a_recent_speed = STOP_INT
-            if b_recent_speed != STOP_INT:
-                writeToSerial(STOP + "b")
-                b_recent_speed = STOP_INT
-                
-    
-        elif abs(x_position)>abs(y_position) and abs(x_position)>abs(p_position) and abs(x_position)>abs(s_position): #x should be preferred -forward & backward
+
+        if abs(x_position)>abs(y_position) and abs(x_position)>abs(p_position) and abs(x_position)>abs(s_position): #x should be preferred -forward & backward
             speed_forward = myround(translate(x_position,-1,1,speed_fb_min,speed_fb_max)) #forward
             if int(speed_forward) != c_recent_speed:
                 current_time = time.time()
@@ -187,7 +163,7 @@ while True:
                     last_send_time = current_time
                     writeToSerial(str(int(speed_backward)) + "d") # d is backward thruster
                     d_recent_speed = speed_backward
-                    
+
             speed_down = myround(translate(abs(x_position), 0,1,STOP_INT,speed_fb_d_max)) # between 1500 and 1600
             if int(speed_down) != b_recent_speed:
                 current_time = time.time()
@@ -204,7 +180,7 @@ while True:
                     a_recent_speed = speed_up
             print(str(speed_backward) + "d    " + str(speed_forward) + "c   " + str(speed_down) + "b  " + str(speed_up) + "a  ")
 
-        elif abs(y_position)>abs(x_position) and abs(y_position)>abs(p_position) and abs(y_position)>abs(s_position)  : # if y is greater than x (up and down)
+        elif abs(y_position)>abs(x_position) and abs(y_position)>abs(p_position) and abs(y_position)>abs(s_position): # if y is greater than x (up and down)
 
             speed_up_1 = myround(translate(y_position, -1,1,speed_ud_max,speed_ud_min)) #up
             if int(speed_up_1) != a_recent_speed:
@@ -230,10 +206,10 @@ while True:
                 writeToSerial(STOP + "d")
                 d_recent_speed = STOP_INT
             #print(str(speed_up_1) + "a  " + str(speed_down_1) + "b   " + "1500c   " +   "1500d   " )
-            
-        else : # if y is greater than x (tilt up and down (pitch))
 
-            speed_up_1 = myround(translate(p_position, -1,1,1500,1700)) #pitch up
+        elif abs(p_position)>abs(s_position) and abs(p_position)>abs(x_position) and abs(p_position)>abs(y_position) and abs(p_position) > .05: # x should be preferred (turn right(yaw))
+
+            speed_up_1 = myround(translate(p_position, -1,1,1700,1500)) #pitch up
             if int(speed_up_1) != a_recent_speed:
                 current_time = time.time()
                 if current_time > last_send_time + SEND_EVERY:
@@ -241,7 +217,7 @@ while True:
                     writeToSerial(str(int(speed_up_1)) + "a")
                     a_recent_speed = speed_up_1
 
-            speed_down_1 = myround(translate(p_position,1,-1,1500,1700)) #pitch down
+            speed_down_1 = myround(translate(p_position,1,-1,1700,1500)) #pitch down
             if int(speed_down_1) != b_recent_speed:
                 current_time = time.time()
                 if current_time > last_send_time + SEND_EVERY:
@@ -256,6 +232,49 @@ while True:
             if d_recent_speed != STOP_INT:
                 writeToSerial(STOP + "d")
                 d_recent_speed = STOP_INT
+        elif abs(s_position)>abs(p_position) and abs(s_position)>abs(x_position) and abs(s_position)>abs(y_position) and abs(s_position) > .05: # x should be preferred (turn right(yaw))
+            print(str(s_position) + " s_position")
+            print(str(p_position) + " p_position")
+            print(str(x_position) + " x_position") 
+            print(str(y_position) + " y_position")
+            speed_forward = myround(translate(s_position,-1,1,1300,1700)) #turn right
+            if int(speed_forward) != c_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_forward)) + "c") # c is forward thruster
+                    c_recent_speed = speed_forward
+
+            # was previously [1400, 1500]
+            speed_backward = myround(translate(s_position, 1,-1,1300,1700)) #turn left
+            if int(speed_backward) != d_recent_speed:
+                current_time = time.time()
+                if current_time > last_send_time + SEND_EVERY:
+                    last_send_time = current_time
+                    writeToSerial(str(int(speed_backward)) + "d") # d is backward thruster
+                    d_recent_speed = speed_backward
+
+            if a_recent_speed != STOP_INT:
+                writeToSerial(STOP + "a")
+                a_recent_speed = STOP_INT
+            if b_recent_speed != STOP_INT:
+                writeToSerial(STOP + "b")
+                b_recent_speed = STOP_INT
+                
+        else:
+            if a_recent_speed != STOP_INT:
+                writeToSerial(STOP + "a")
+                a_recent_speed = STOP_INT
+            if b_recent_speed != STOP_INT:
+                writeToSerial(STOP + "b")
+                b_recent_speed = STOP_INT
+            if c_recent_speed != STOP_INT:
+                writeToSerial(STOP + "c")
+                c_recent_speed = STOP_INT
+            if d_recent_speed != STOP_INT:
+                writeToSerial(STOP + "d")
+                d_recent_speed = STOP_INT
+        
 
 
 
