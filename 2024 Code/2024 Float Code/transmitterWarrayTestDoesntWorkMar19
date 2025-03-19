@@ -1,0 +1,44 @@
+#include <RH_ASK.h>
+#include <SPI.h> // Not actually used but needed to compile
+char pressuredata[2];
+int x = 0;
+
+RH_ASK driver;
+
+char randNumber;
+
+void setup()
+{
+    Serial.begin(9600);    // Debugging only
+  //  if (!driver.init())
+  //       Serial.println("init failed");
+
+    randomSeed(analogRead(0));
+}
+
+void loop()
+{
+    
+     randNumber = char(random(80,300));
+     Serial.println(randNumber);
+     Serial.println(x);
+     pressuredata[x] = randNumber;
+      x = x+1;
+      if (x >= 48) {
+        for (byte i = 0; i < 2; i = i + 1) {
+          char *msg = char(pressuredata[i]);
+          driver.send((uint8_t *)msg, strlen(msg));
+          driver.waitPacketSent();
+          Serial.println(pressuredata[i]);
+          delay(1000);
+      } 
+ 
+      }
+      delay(500);
+
+  
+//const char *msg = "Hello World!";
+//driver.send((uint8_t *)msg, strlen(msg));
+ //driver.waitPacketSent();
+ // delay(1000);
+}
