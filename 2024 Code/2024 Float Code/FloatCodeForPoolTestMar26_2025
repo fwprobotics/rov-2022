@@ -1,0 +1,108 @@
+#include "SparkFun_ProDriver_TC78H670FTG_Arduino_Library.h" //Click here to get the library: http://librarymanager/All#SparkFun_ProDriver
+PRODRIVER myProDriver; //Create instance of this object
+int counter = 0;
+int d = 0;
+int x = 3;
+
+float pressuredata[11];
+float depthdata[11];
+int whereArray = 0;
+
+#include <Wire.h>
+#include "MS5837.h"
+#include <RH_ASK.h>
+#include <SPI.h> // Not actually used but needed to compile
+char buff[10];
+
+MS5837 sensor;
+RH_ASK driver;
+
+
+void setup() {
+
+  Serial.println("SparkFun ProDriver TC78H670FTG Example 1");
+  myProDriver.begin(); // default settings
+
+  if (!driver.init())
+        Serial.println("init failed");
+  Serial.begin(9600);
+  
+  Serial.println("Starting");
+  
+  Wire.begin();
+
+  // Initialize pressure sensor
+  // Returns true if initialization was successful
+  // We can't continue with the rest of the program unless we can initialize the sensor
+  while (!sensor.init()) {
+    Serial.println("Init failed!");
+    Serial.println("Are SDA/SCL connected correctly?");
+    Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
+    Serial.println("\n\n\n");
+    delay(5000);
+  }
+  
+  sensor.setModel(MS5837::MS5837_30BA);
+  sensor.setFluidDensity(997); // kg/m^3 (freshwater, 1029 for seawater)
+}
+
+void loop() {
+ if (counter >= 0 && counter <= x) {
+      myProDriver.step(250,d);
+      delay(1000);
+      counter = counter+1;
+      Serial.println(counter);
+ }
+ else {
+  counter = 0;
+  x = 4;
+  delay(20000);
+  
+   sensor.read();
+ // char pressureStr[7];
+  Serial.print("Pressure: "); 
+  Serial.print(sensor.pressure()); 
+  Serial.println(" mbar");
+  pressuredata[whereArray] = sensor.pressure();
+ // dtostrf(sensor.pressure(), 2, 2, pressureStr);
+     //     Serial.println(pressureStr);
+        //  driver.send((uint8_t *)pressureStr, strlen(pressureStr));
+        //  driver.waitPacketSent();
+  
+  Serial.print("Depth: "); 
+  Serial.print(sensor.depth()); 
+  Serial.println(" m");
+  depthdata[whereArray] = sensor.depth();
+  whereArray = whereArray + 1;
+  if (whereArray == 11) {
+        delay(60000);
+        d = 1;
+        for (int i = 0; i < 54; i = i +1){
+          myProDriver.step(250,d);
+          delay(1000);
+        }
+
+    
+        char pressureStr[7];
+        char depthStr[7];
+        for (int i = 0; i < 15; i = i +1) {
+          dtostrf(pressuredata[i], 2, 2, pressureStr);
+          Serial.println(pressureStr);
+          driver.send((uint8_t *)pressureStr, strlen(pressureStr));
+          driver.waitPacketSent();
+          delay(1000);
+          dtostrf(depthdata[i], 2, 2, depthStr);
+          Serial.println(depthStr);
+          driver.send((uint8_t *)depthStr, strlen(depthStr));
+          driver.waitPacketSent();
+          delay(1000);
+        }
+        while(true) {}
+       
+  }
+  
+}
+}
+
+///0 means that the pump is going towards the dry container
+///1 means that the pump is going towards the tip of the syringe
