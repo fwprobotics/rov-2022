@@ -1,11 +1,11 @@
-//integrated with laser
+//integrated with laser // NEW ROBOT !!!!!!!!!!!!!!!!!
 #include <Servo.h>
 // #include <Wire.h>
 // #include "TSYS01.h"
-int servoPin = 9;
+int servoPin = A9;
 int servoPosition = 0;
 Servo myservo_1;
-Servo myservo_2;
+// Servo myservo_2;
 Servo mythruster_forward;
 Servo mythruster_backward;
 Servo mythruster_up;
@@ -18,13 +18,13 @@ unsigned long mytime = millis();
 
 void setup() { // put your setup code here, to run once:
   Serial.begin(19200);
-  myservo_1.attach(9);
-  myservo_2.attach(10);
+  myservo_1.attach(A9);
+  //myservo_2.attach(10);
 
   mythruster_up.attach(5);
-  mythruster_down.attach(4);
-  mythruster_forward.attach(3);
-  mythruster_backward.attach(7);
+  mythruster_down.attach(3);
+  mythruster_forward.attach(7);
+  mythruster_backward.attach(4);
 
   pinMode(2, OUTPUT);
   pinMode(6, OUTPUT);
@@ -52,9 +52,9 @@ void loop() {
     int speed = Serial.parseInt();
     char ch = Serial.read();
     if(ch=='y'){
-      myservo_1.write(speed);
+      myservo_1.write(0);
     } if(ch =='z'){
-      myservo_2.write(speed);
+      myservo_1.write(180);
     } if (ch=='l' && on==false && millis()-mytime > 500){
       digitalWrite(6, HIGH);
       mytime = millis();
