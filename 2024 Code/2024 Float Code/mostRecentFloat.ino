@@ -49,7 +49,7 @@ void setup() {
   sensor.setModel(MS5837::MS5837_30BA);
   sensor.setFluidDensity(997); // kg/m^3 (freshwater, 1029 for seawater)
 
-    for(int i = 0; i < 1; i++) {
+    for(int i = 0; i < 24; i++) {
       myProDriver.step(250, d);
       delay(500);
     }
@@ -83,10 +83,6 @@ void loop() {
 
 
   char timeStamp[36];
- 
-    
-
-
   char pressureStr[7];
   char depthStr[7];
   dtostrf(currentPressure, 2, 2, pressureStr);
@@ -103,16 +99,35 @@ void loop() {
     driver.waitPacketSent(); 
     delay(1000);
 
-  if(currentDepth <= -1) {
-    while(true) {
-      sensor.read();
-      currentDepth = sensor.depth();
-      dtostrf(currentDepth, 2, 2, depthStr);
-      Serial.println(depthStr);
-      driver.send((uint8_t *)depthStr, strlen(depthStr));
-      driver.waitPacketSent();
-      delay(1000);
+  if(currentDepth <= -2.5) {
+    delay(20000); // wait 20 seconds
+
+      for(int j = 0; j < 20; j++) { // slowly let out water
+        sensor.read();
+        myProDriver.step(125, 1);
+
+        currentDepth = sensor.depth();
+        currentPressure = sensor.pressure();
+
+        char timeStamp[36];
+        char pressureStr[7];
+        char depthStr[7];
+        dtostrf(currentPressure, 2, 2, pressureStr);
+        Serial.println(pressureStr);
+
+        dtostrf(currentDepth, 2, 2, depthStr);
+        Serial.println(depthStr);
+
+        int secs = ((tnow-t1)/1000);
+        sprintf(timeStamp, "EX01, %02d sec, %7s kpa, %7s m", secs, pressureStr, depthStr);
+        Serial.println(timeStamp);
+
+        driver.send((uint8_t *)timeStamp, strlen(timeStamp));
+        driver.waitPacketSent(); 
+
+        delay(1000);
     }
+    
   }
 }
 
