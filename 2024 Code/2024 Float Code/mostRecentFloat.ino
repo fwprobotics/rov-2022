@@ -8,7 +8,7 @@ PRODRIVER myProDriver; //Create instance of this object
 
 float pressuredata[48];
 float depthdata[48];
-int secdata[48];
+int secsdata[48];
 int whereArray = 0;
 float currentDepth = 0.0;
 float currentPressure = 0.0;
@@ -197,7 +197,7 @@ void loop() {
   for (byte i = 0; i < 48; i = i + 1) {
       currentDepth = depthdata[i];
       currentPressure = pressuredata[i];
-      secs = secdata[i];
+      secs = secsdata[i];
 
       // remove this eventually
       dtostrf(currentPressure, 2, 2, pressureStr);
