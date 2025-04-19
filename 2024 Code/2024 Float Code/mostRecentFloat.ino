@@ -26,6 +26,8 @@ RH_ASK driver;
 
 void setup() {
 
+  t1 = millis();
+
   Serial.println("SparkFun ProDriver TC78H670FTG Example 1");
   myProDriver.begin(); // default settings
 
@@ -54,7 +56,7 @@ void setup() {
   for(int i = 0; i < 24; i++) {
     myProDriver.step(250, 0);
     delay(500);
-    if(i%5 == 0) {
+    if(i%3 == 0) {
       tnow = millis();
       sensor.read();
       currentDepth = sensor.depth();
@@ -79,8 +81,6 @@ void setup() {
       driver.waitPacketSent(); 
     }
   }
-
-  t1 = millis();
 }
 
 void loop() {
@@ -116,7 +116,7 @@ void loop() {
   }
 
 
-  if(currentDepth <= -2 || millis() > 450000) {
+  if(currentDepth <= -2 || millis() > 90000) { //450000
     for(int x = 0; x < 4; x++) {
       delay(5000);
       tnow = millis();
